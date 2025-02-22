@@ -129,6 +129,8 @@ With the installation steps above your system now has all necessary tools for de
 - [Deno](https://deno.com)
 
 Runtimes is what your system needs to compile [typescript](https://www.typescriptlang.org) code (used in this project) to javascript and execute the application. You can use either runtime for this project, according to your preference. Both come with an included package manager, ```npm``` for nodejs and ```deno``` for deno. Thereby, the [package.json](./package.json) file defines possible commands that can be executed (using either ```deno``` or ```npm```). The following commands are available in this repository:
+
+
 1. **Running the development server** - This will start the application in development mode, meaning that changes to the code are instantly visible live on [http://localhost:3000](http://localhost:3000) in the browser
    ```bash
    deno task dev

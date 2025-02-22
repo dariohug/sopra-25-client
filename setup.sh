@@ -99,3 +99,6 @@ if [ ${#FAILED_COMMANDS[@]} -gt 0 ]; then
 else
         echo -e "\033[0;32mSetup completed successfully! Project dependencies will now be installed.\033[0m"
 fi
+
+# At the very end of setup.sh
+read -p "Press any key to exit..."
