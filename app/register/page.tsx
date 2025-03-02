@@ -43,6 +43,34 @@ const Register: React.FC = () => {
             }
 
             // Navigate to the user overview
+            handleLogin(values)
+        } catch (error) {
+            if (error instanceof Error) {
+                alert(`Something went wrong during the login:\n${error.message}`);
+            } else {
+                console.error("An unknown error occurred during login.");
+            }
+        }
+    };
+
+    const handleLogin = async (values: { username: string; password: string }) => {
+        try {
+            // Call the API service and let it handle JSON serialization and error handling
+            // const response = await apiService.post<User>("/users", values);
+            const response = await apiService.post<User>("/login", values);
+            console.log("Login Response:", response);
+
+            // Use the useLocalStorage hook that returned a setter function (setToken in line 41) to store the token if available
+            if (response.token) {
+                setToken(response.token);
+                localStorage.setItem("token", response.token)
+            } else { alert("No token set in localStorage"); }
+
+            if (response.id) {
+                localStorage.setItem("userId", response.id);
+            } else { alert("No userId set in localStorage"); }
+
+            // Navigate to the user overview
             router.push("/users");
         } catch (error) {
             if (error instanceof Error) {
