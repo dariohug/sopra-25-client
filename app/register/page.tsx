@@ -31,25 +31,18 @@ const Register: React.FC = () => {
 
     const handleRegister = async (values: FormFieldProps) => {
         try {
-            // Call the API service and let it handle JSON serialization and error handling
             const response = await apiService.post<User>("/users", values);
 
-            // log values
             console.log(values)
 
-            // Use the useLocalStorage hook that returned a setter function (setToken in line 41) to store the token if available
-            if (response.token) {
-                setToken(response.token);
-            }
+            if (response.token) { setToken(response.token); }
 
-            // Navigate to the user overview
             handleLogin(values)
+        
         } catch (error) {
-            if (error instanceof Error) {
-                alert(`Something went wrong during the login:\n${error.message}`);
-            } else {
-                console.error("An unknown error occurred during login.");
-            }
+            
+            if (error instanceof Error) { alert(`Something went wrong during the login:\n${error.message}`);
+            } else { console.error("An unknown error occurred during login."); }
         }
     };
 
