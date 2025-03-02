@@ -10,11 +10,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Card, Spin, Typography } from "antd";
+import { Card, Input, Button, DatePicker, Spin, Typography, message } from "antd";
+import dayjs from "dayjs";
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
-import { Button } from "antd";
 
 const { Title, Text } = Typography;
 
@@ -24,26 +24,24 @@ const Profile: React.FC = () => {
     const apiService = useApi();
     const [user, setUser] = useState<User | null>(null);        //state to save user info
     const [loading, setLoading] = useState(true);               //state to manage loadign indicator
+    const [isEditing, setIsEditing] = useState(false);          //toggle if a user is editing
+    const [username, setUsername] = useState("");               //Edit username
+
+    const formattedBirthday = user?.birthday ? new Date(user.birthday).toISOString() : null;
+    const [birthday, setBirthday] = useState<string | null>(formattedBirthday);
+
+    const currentuserId = Number(localStorage.getItem("userId"));   //Define current ID as Number
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-
-        if (!token) {
-            alert("token missing -> log in");
-            router.push("/login");                              //redirect to login if user would not be loged in
-            return;
-        }
-
-        if (!id) {
-            console.error("No user ID found in params.");
-            return;
-        }
 
         const fetchUserProfile = async () => {
             try {
 
                 const user: User = await apiService.get<User>(`/users/${id}`);
                 setUser(user);
+                if (user.username != null) { setUsername(user.username); }
+                if (user.birthday != null) { setBirthday(user.birthday.toISOString); }
                 console.log("Fetched user:", user);
                 setLoading(false);
 
@@ -55,32 +53,88 @@ const Profile: React.FC = () => {
 
             }
         };
-
         fetchUserProfile();
     }, [id, router]);
 
-    if (loading) return <Spin size="small" />;                          // Loading Animation
+    const handleEdit = async () => {
+        if (!user) { return; }
 
-    if (!user) return <p>User not found!</p>;
+        try {
+            const requestBody = { username, birthday: birthday ? new Date(birthday).toISOString() : null };
+            await apiService.put(`/users/${user.id}`, requestBody);
+
+            message.success("Profile has been updated!");
+            console.log("given to backend: ", requestBody)
+
+            setUser({
+                ...user,
+                username,
+                birthday: birthday ? new Date(birthday) : null
+            });
+
+            setIsEditing(false);
+            router.push(`/users/${user.id}`);
+        } catch (error) {
+            message.error("Failed!")
+            console.error("update Error:", error);
+        }
+    };
+
+    if (loading) return <Spin size="small" />;                          // Loading Animation
 
     // console.log("user.id (from API):", user?.id, typeof user?.id);
     // console.log("currentUserId (from localStorage):", localStorage.getItem("userId"), typeof localStorage.getItem("userId"));
 
-    console.log("id:" , localStorage.getItem("userId"))
+    console.log("id:", localStorage.getItem("userId"))
 
     return (
         <Card title={user?.username} className="profile-card">
             <p><strong>Name:</strong> {user?.name}</p>
-            <p><strong>Username:</strong> {user?.username}</p>
-            <p><strong>Status:</strong> {user?.status}</p>
-            {user?.creationDate && <p><strong>Creation Date:</strong> {new Date(user.creationDate).toLocaleDateString()}</p>}
-            <p><strong>Birth Date:</strong> {user.birthday ? new Date(user.birthday).toLocaleDateString() : ""}</p>
             <p><strong>User-ID:</strong> {user?.id}</p>
 
-            {user?.id === Number(localStorage.getItem("userId")) && (
-                <Button type="primary" onClick={() => router.push(`/users/edit/${user.id}`)} style={{ marginTop: "10px" }}>
-                    Edit Profile
-                </Button>
+            {/* Editable Username */}
+            <p><strong>Username:</strong>
+                {isEditing ? (
+                    <Input value={username} onChange={(e) => setUsername(e.target.value)} />
+                ) : (
+                    user?.username
+                )}
+            </p>
+
+            {/* Editable Birthday */}
+            <p><strong>Birth Date:</strong>
+                {isEditing ? (
+                    <DatePicker
+                        value={birthday ? dayjs(birthday) : null}
+                        onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : null)}
+                    />
+
+                ) : (
+                    user?.birthday ? new Date(user.birthday).toLocaleDateString() : "Not set"
+                )}
+            </p>
+
+            <p><strong>Status:</strong> {user?.status}</p>
+            {user?.creationDate && (
+                <p><strong>Creation Date:</strong> {new Date(user.creationDate).toLocaleDateString()}</p>
+            )}
+
+            {/* Show edit/save buttons if the user is viewing their own profile */}
+            {Number(user?.id) === Number(currentuserId) && (
+                isEditing ? (
+                    <>
+                        <Button type="primary" onClick={handleEdit} style={{ marginTop: "10px", marginRight: "10px" }}>
+                            Save
+                        </Button>
+                        <Button onClick={() => setIsEditing(false)} style={{ marginTop: "10px" }}>
+                            Cancel
+                        </Button>
+                    </>
+                ) : (
+                    <Button type="primary" onClick={() => setIsEditing(true)} style={{ marginTop: "10px" }}>
+                        Edit Profile
+                    </Button>
+                )
             )}
         </Card>
     );
