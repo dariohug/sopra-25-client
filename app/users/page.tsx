@@ -65,6 +65,7 @@ const Dashboard: React.FC = () => {
       await apiService.put(`/logout/${userId}`, { headers: { Authorization: `Bearer ${token}` } });
 
       clearToken();
+      localStorage.clear();
 
       router.push("/login"); // Redirect to login page
     } catch (error) {

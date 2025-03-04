@@ -10,13 +10,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Card, Input, Button, DatePicker, Spin, Typography, message } from "antd";
+import { Card, Input, Button, DatePicker, Spin, message } from "antd";
 import dayjs from "dayjs";
 import { useApi } from "@/hooks/useApi";
-import useLocalStorage from "@/hooks/useLocalStorage";
+// import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 
-const { Title, Text } = Typography;
+// const { Title, Text } = Typography;
 
 const Profile: React.FC = () => {
     const router = useRouter();
@@ -33,7 +33,7 @@ const Profile: React.FC = () => {
     const currentuserId = Number(localStorage.getItem("userId"));   //Define current ID as Number
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        // const token = localStorage.getItem("token");
 
         const fetchUserProfile = async () => {
             try {
@@ -107,8 +107,8 @@ const Profile: React.FC = () => {
                     <DatePicker
                         value={birthday ? dayjs(birthday) : null}
                         onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : null)}
+                        popupClassName="custom-date-picker"
                     />
-
                 ) : (
                     user?.birthday ? new Date(user.birthday).toLocaleDateString() : "Not set"
                 )}
