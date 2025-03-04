@@ -88,7 +88,6 @@ export default function Home() {
           >
             register
           </Button>
-
         </div>
       </main>
       <footer className={styles.footer}>

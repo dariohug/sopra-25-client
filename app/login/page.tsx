@@ -8,10 +8,10 @@ import { Button, Form, Input } from "antd";
 // Optionally, you can import a CSS module or file for additional styling:
 // import styles from "@/styles/page.module.css";
 
-interface FormFieldProps {
-  label: string;
-  value: string;
-}
+// interface FormFieldProps {
+//   label: string;
+//   value: string;
+// }
 
 const Login: React.FC = () => {
   const router = useRouter();
@@ -27,10 +27,11 @@ const Login: React.FC = () => {
   note that the key we are selecting is "token" and the default value we are setting is an empty string
   if you want to pick a different token, i.e "usertoken", the line above would look as follows: } = useLocalStorage<string>("usertoken", "");*/
 
-  const { set: setToken, } = useLocalStorage<string>("token", "");
+  const { set: setToken } = useLocalStorage<string>("token", "");
 
-
-  const handleLogin = async (values: { username: string; password: string }) => {
+  const handleLogin = async (
+    values: { username: string; password: string },
+  ) => {
     try {
       // Call the API service and let it handle JSON serialization and error handling
       // const response = await apiService.post<User>("/users", values);
@@ -40,12 +41,12 @@ const Login: React.FC = () => {
       // Use the useLocalStorage hook that returned a setter function (setToken in line 41) to store the token if available
       if (response.token) {
         setToken(response.token);
-        localStorage.setItem("token", response.token)
-      } else { alert("No token set in localStorage"); }
+        localStorage.setItem("token", response.token);
+      } else alert("No token set in localStorage");
 
       if (response.id) {
         localStorage.setItem("userId", response.id);
-      } else { alert("No userId set in localStorage"); }
+      } else alert("No userId set in localStorage");
 
       // Navigate to the user overview
       router.push("/users");

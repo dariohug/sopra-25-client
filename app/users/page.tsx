@@ -62,7 +62,9 @@ const Dashboard: React.FC = () => {
         return;
       }
 
-      await apiService.put(`/logout/${userId}`, { headers: { Authorization: `Bearer ${token}` } });
+      await apiService.put(`/logout/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       clearToken();
       localStorage.clear();
@@ -73,8 +75,6 @@ const Dashboard: React.FC = () => {
       alert("Something went wrong during logout.");
     }
   };
-
-
 
   useEffect(() => {
     const fetchUsers = async () => {
