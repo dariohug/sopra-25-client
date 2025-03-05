@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
   const apiService = useApi();
   const [users, setUsers] = useState<User[] | null>(null);
 
-  const { clear: clearToken, } = useLocalStorage<string>("token", "");
+  const { clear: clearToken } = useLocalStorage<string>("token", "");
 
   useLocalStorage<string>("lobby", "");
 
@@ -53,7 +53,6 @@ const Dashboard: React.FC = () => {
       clearToken();
       localStorage.clear();
       router.push("/login");
-
     } catch (error) {
       console.error("Logout failed", error);
       alert("Something went wrong during logout.");
@@ -63,7 +62,10 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (!token) { router.push("/login"); return; }
+    if (!token) {
+      router.push("/login");
+      return;
+    }
 
     const fetchUsers = async () => {
       try {

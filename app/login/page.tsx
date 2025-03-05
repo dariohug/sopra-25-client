@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
@@ -6,7 +6,6 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { Button, Form, Input, Typography } from "antd";
 import Link from "next/link";
-
 
 const { Text } = Typography;
 
@@ -19,9 +18,8 @@ const Login: React.FC = () => {
 
   const handleLogin = async (
     values: { username: string; password: string },
-    ) => {
+  ) => {
     try {
-
       const response = await apiService.post<User>("/login", values);
       console.log("Login Response:", response);
 
@@ -74,17 +72,15 @@ const Login: React.FC = () => {
           </Button>
         </Form.Item>
 
-      <Form.Item style={{ width: "100%", textAlign: "center" }}>
-        <Text>
-          Don't have an account?{" "}
-          <Link href="/register" style={{ color: "#1890ff" }}>
-            Register here
-          </Link>
-        </Text>
-      </Form.Item>
+        <Form.Item style={{ width: "100%", textAlign: "center" }}>
+          <Text>
+            Don't have an account?{" "}
+            <Link href="/register" style={{ color: "#1890ff" }}>
+              Register here
+            </Link>
+          </Text>
+        </Form.Item>
       </Form>
-
-
     </div>
   );
 };

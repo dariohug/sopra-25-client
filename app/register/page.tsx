@@ -1,11 +1,10 @@
-"use client"; 
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { Button, Form, Input } from "antd";
-
 
 interface FormFieldProps {
   username: string;
@@ -18,7 +17,7 @@ const Register: React.FC = () => {
   const apiService = useApi();
   const [form] = Form.useForm();
 
-  const { set: setToken, } = useLocalStorage<string>("token", "");
+  const { set: setToken } = useLocalStorage<string>("token", "");
 
   const handleRegister = async (values: FormFieldProps) => {
     try {
@@ -26,12 +25,10 @@ const Register: React.FC = () => {
 
       console.log(values);
 
-      if (response.token) { setToken(response.token); }
+      if (response.token) setToken(response.token);
 
       handleLogin(values);
-
     } catch (error) {
-
       if (error instanceof Error) {
         alert(`Something went wrong during the login:\n${error.message}`);
       } else {
@@ -40,23 +37,20 @@ const Register: React.FC = () => {
     }
   };
 
-  const handleLogin = async ( values: { username: string; password: string }, ) => {
+  const handleLogin = async (
+    values: { username: string; password: string },
+  ) => {
     try {
-
       const response = await apiService.post<User>("/login", values);
-    //   console.log("Login Response:", response);
+      //   console.log("Login Response:", response);
 
       if (response.token) {
-
         setToken(response.token);
         // localStorage.setItem("token", response.token);
-
-      } else { alert("No token set in localStorage"); }
+      } else alert("No token set in localStorage");
 
       if (response.id) {
-
         localStorage.setItem("userId", response.id);
-
       } else alert("No userId set in localStorage");
 
       // Navigate to the user overview
