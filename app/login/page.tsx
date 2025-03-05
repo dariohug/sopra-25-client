@@ -74,7 +74,7 @@ const Login: React.FC = () => {
 
         <Form.Item style={{ width: "100%", textAlign: "center" }}>
           <Text>
-            Don't have an account?{" "}
+            Dont have an account?{" "}
             <Link href="/register" style={{ color: "#1890ff" }}>
               Register here
             </Link>
